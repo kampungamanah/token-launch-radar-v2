@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Launch Radar — pre-token protocols ranked by implied value</title>
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<header class="top">
+  <p class="eyebrow">Token Launch Radar &middot; model radar-3 &middot; snapshot <span id="asOf">—</span></p>
+  <h1>Launch Radar</h1>
+  <p class="lede">Protocols that record no token, ranked by what a token would be worth if the record stayed as it is. The board finds launches before they happen — and shows how to farm each one.</p>
+  <div class="stats" id="stats"></div>
+</header>
+
+<section class="spot" id="spot">
+  <h2>Top 10 right now</h2>
+  <p class="sub">The ten largest implied values on the board. Click a card to open its detail.</p>
+  <div class="cards" id="spotlight"></div>
+</section>
+
+<section class="method" id="method">
+  <h2>How the value is worked out</h2>
+  <p class="formula">implied value = TVL &times; peer multiple &times; growth &times; maturity &times; breadth</p>
+  <ul>
+    <li><strong>Peer multiple, three tiers.</strong> The median market-cap-to-TVL ratio of the live-token protocols in the same category (8+ peers), else the median of its category family — Trading, Lending, Yield, Stable &amp; RWA, Infra — else the snapshot-wide median. On this snapshot no row falls back to the global median. No flat multiple, no hand-picked names.</li>
+    <li><strong>Growth, asymmetric.</strong> The 7-day TVL change, clamped to &minus;80% … +300%. A rise counts at 0.60, a fall bites at 0.90: declines are stickier than rallies.</li>
+    <li><strong>Maturity, saturating.</strong> How long the protocol has run with no token recorded: 0.70 at day zero, rising toward 1.20 and flattening — each extra year adds less than the last.</li>
+    <li><strong>Breadth, diminishing.</strong> 3% per chain it runs on, on a square-root scale up to eight chains: more chains help, the ninth adds almost nothing.</li>
+    <li><strong>Radar score &amp; confidence.</strong> Every row also carries a 0–100 score (70% implied value on a log scale, 30% momentum) and a confidence — High, Medium or Low — from direct peers, a known listing date and a reported 7-day change.</li>
+  </ul>
+  <p class="caveat">A protocol is listed as pre-token when its record carries no token — no market cap, no CoinGecko id, no symbol. That is what the record says, never proof it has none. Live-token protocols are shown apart, with the market&rsquo;s own values, never mixed into the ranking.</p>
+</section>
+
+<section class="controls">
+  <div class="tabs" role="tablist">
+    <button id="tabBoard" class="tab active" data-tab="board">Board</button>
+    <button id="tabLive" class="tab" data-tab="live">Live tokens</button>
+    <button id="tabPeers" class="tab" data-tab="peers">Peer multiples</button>
+  </div>
+  <div class="filters">
+    <input id="q" type="search" placeholder="Search a protocol…" aria-label="Search protocols">
+    <select id="category" aria-label="Filter by category"><option value="all">All categories</option></select>
+    <select id="chain" aria-label="Filter by chain"><option value="all">All chains</option></select>
+    <label class="check"><input id="watchOnly" type="checkbox"> Watchlist only</label>
+  </div>
+</section>
+
+<main id="boardWrap">
+  <table id="board">
+    <thead>
+      <tr>
+        <th data-sort="rank">#</th>
+        <th data-sort="name">Protocol</th>
+        <th data-sort="category">Category</th>
+        <th data-sort="tvl_usd">TVL</th>
+        <th data-sort="change_7d">7d</th>
+        <th data-sort="age_days">Age</th>
+        <th data-sort="score">Score</th>
+        <th data-sort="implied_value_usd">Implied value</th>
+      </tr>
+    </thead>
+    <tbody id="rows"></tbody>
+  </table>
+  <p id="count" class="count"></p>
+  <table id="liveTable" hidden>
+    <thead>
+      <tr><th>Protocol</th><th>Category</th><th>TVL</th><th>Market cap</th><th>MCap / TVL</th><th>7d</th></tr>
+    </thead>
+    <tbody id="liveRows"></tbody>
+  </table>
+  <p id="liveNote" class="count" hidden>Already trading — shown for reference only, never ranked. Their market-cap-to-TVL ratios are what calibrate the board&rsquo;s peer multiples.</p>
+  <table id="peerTable" hidden>
+    <thead>
+      <tr><th>Category</th><th>Live peers</th><th>Peer multiple</th><th>Family</th><th>Family peers</th><th>Family multiple</th></tr>
+    </thead>
+    <tbody id="peerRows"></tbody>
+  </table>
+  <p id="peerNote" class="count" hidden>Every peer multiple is the median market-cap-to-TVL ratio of live-token protocols in this snapshot. A category with fewer than 8 peers takes its family&rsquo;s median instead — that is the model&rsquo;s second tier.</p>
+</main>
+
+<aside id="detail" class="detail" hidden aria-label="Protocol detail"></aside>
+
+<footer>
+  <p>Data: DefiLlama protocols, fetched <span id="source">—</span>. Nothing here is financial advice, and no value is a prediction that a token will launch, or when.</p>
+  <p>Implied values are this radar&rsquo;s own claim, computed from the snapshot&rsquo;s figures alone.</p>
+</footer>
+
+<script src="../data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
